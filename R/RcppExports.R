@@ -28,7 +28,7 @@ Gram <- function(K, L, A, d) {
 }
 
 #' @importFrom Rcpp sourceCpp
-#' @useDynLib combinIT
+#' @useDynLib combinIT, .registration = TRUE
 #' 
 Bfc <- function(x, bl, tr, p) {
     .Call('_combinIT_Bfc', PACKAGE = 'combinIT', x, bl, tr, p)

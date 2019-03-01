@@ -4,7 +4,7 @@ using namespace Rcpp;
 using namespace arma;
 // [[Rcpp::depends(RcppArmadillo)]]
 //' @importFrom Rcpp sourceCpp
-//' @useDynLib combinIT
+//' @useDynLib combinIT, .registration = TRUE
 //' 
 // [[Rcpp::export]]
   float Bfc(arma::mat x,int bl, int tr,int p) {
@@ -88,7 +88,7 @@ double piephoC(arma::mat x,int bl, int tr) {
   arma::vec RowMean = arma::mean(x,1);
   arma::vec ColMean= arma::trans(arma::mean(x,0));
   double Mean = arma::as_scalar(arma::accu(x)/(tr*bl));
-  mat Res2(bl,tr);
+  arma::mat Res2(bl,tr);
   for(int i=0; i<bl;i++)
   {
     for(int j=0;j< tr;j++)
