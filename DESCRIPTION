@@ -1,14 +1,18 @@
 Package: combinIT
 Type: Package
 Title: Combine Interaction Tests for testing interaction in unreplicated two-way tables
-Version: 0.1.0
-Imports: Rcpp,mvtnorm
-LinkingTo: Rcpp, RcppArmadillo
-Author: Zahra
-Maintainer: The package maintainer <zshenavari@yahoo.com>
+Version: 0.0.1
+Authors@R: c(
+    person("Zahra", "Shenavari", email = "zshenavari@yahoo.com", role = c("aut", "cre")),
+    person("Seyed Morteza", "Najibi", email = "mor.najibi@gmail.com", role = "aut"))
+Maintainer: Zahra Shenavari <zshenavari@yahoo.com>
+URL: https://github.com/sdateam/combinIT.git
 Description: combination
-Dependent: R(>=3.5.1)
-License: Shiraz uni
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: TRUE
 RoxygenNote: 6.1.1
+Imports: Rcpp,mvtnorm
+LinkingTo: Rcpp, RcppArmadillo
+Suggests: knitr
+Dependent: R (>=2.10)
