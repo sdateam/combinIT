@@ -4,70 +4,70 @@
 #' Module  function
 #' @importFrom Rcpp sourceCpp
 mod <- function(K, W) {
-    .Call('_combinIT_mod', PACKAGE = 'combinIT', K, W)
+    .Call(`_combinIT_mod`, K, W)
 }
 
 #' @importFrom Rcpp sourceCpp
 Csij <- function(i, j, K, L, B) {
-    .Call('_combinIT_Csij', PACKAGE = 'combinIT', i, j, K, L, B)
+    .Call(`_combinIT_Csij`, i, j, K, L, B)
 }
 
 #'@importFrom Rcpp sourceCpp
 SS <- function(K, L, B, d) {
-    .Call('_combinIT_SS', PACKAGE = 'combinIT', K, L, B, d)
+    .Call(`_combinIT_SS`, K, L, B, d)
 }
 
 #'@importFrom Rcpp sourceCpp
 Cofmat <- function(d, L, cx) {
-    .Call('_combinIT_Cofmat', PACKAGE = 'combinIT', d, L, cx)
+    .Call(`_combinIT_Cofmat`, d, L, cx)
 }
 
 #'@importFrom Rcpp sourceCpp
 Gram <- function(K, L, A, d) {
-    .Call('_combinIT_Gram', PACKAGE = 'combinIT', K, L, A, d)
+    .Call(`_combinIT_Gram`, K, L, A, d)
 }
 
 #' @importFrom Rcpp sourceCpp
 #' @useDynLib combinIT, .registration = TRUE
 #' 
 Bfc <- function(x, bl, tr, p) {
-    .Call('_combinIT_Bfc', PACKAGE = 'combinIT', x, bl, tr, p)
+    .Call(`_combinIT_Bfc`, x, bl, tr, p)
 }
 
 #' @importFrom Rcpp sourceCpp
 #' 
 Bfsim <- function(nsim, bl, tr, p) {
-    .Call('_combinIT_Bfsim', PACKAGE = 'combinIT', nsim, bl, tr, p)
+    .Call(`_combinIT_Bfsim`, nsim, bl, tr, p)
 }
 
 #' @importFrom Rcpp sourceCpp
 #' 
 picf <- function(y, kp, c0) {
-    .Call('_combinIT_picf', PACKAGE = 'combinIT', y, kp, c0)
+    .Call(`_combinIT_picf`, y, kp, c0)
 }
 
 #' Module  function
 #' @importFrom Rcpp sourceCpp
 PICfsim <- function(nsim, kp, c0, n) {
-    .Call('_combinIT_PICfsim', PACKAGE = 'combinIT', nsim, kp, c0, n)
+    .Call(`_combinIT_PICfsim`, nsim, kp, c0, n)
 }
 
 #' @importFrom Rcpp sourceCpp
 #'
 C0 <- function(kp, n, nc0) {
-    .Call('_combinIT_C0', PACKAGE = 'combinIT', kp, n, nc0)
+    .Call(`_combinIT_C0`, kp, n, nc0)
 }
 
 #' @importFrom Rcpp sourceCpp
 #' @useDynLib combinIT
 #' 
 piephoC <- function(x, bl, tr) {
-    .Call('_combinIT_piephoC', PACKAGE = 'combinIT', x, bl, tr)
+    .Call(`_combinIT_piephoC`, x, bl, tr)
 }
 
 #' @importFrom Rcpp sourceCpp
 #' 
 Piephosim <- function(nsim, bl, tr) {
-    .Call('_combinIT_Piephosim', PACKAGE = 'combinIT', nsim, bl, tr)
+    .Call(`_combinIT_Piephosim`, nsim, bl, tr)
 }
 
