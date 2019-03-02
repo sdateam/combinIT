@@ -27,8 +27,14 @@ Gram <- function(K, L, A, d) {
     .Call(`_combinIT_Gram`, K, L, A, d)
 }
 
-#' @importFrom Rcpp sourceCpp
 #' @useDynLib combinIT, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
+#' 
+res <- function(x) {
+    .Call(`_combinIT_res`, x)
+}
+
+#' @importFrom Rcpp sourceCpp
 #' 
 Bfc <- function(x, bl, tr, p) {
     .Call(`_combinIT_Bfc`, x, bl, tr, p)
@@ -69,5 +75,11 @@ piephoC <- function(x, bl, tr) {
 #' 
 Piephosim <- function(nsim, bl, tr) {
     .Call(`_combinIT_Piephosim`, nsim, bl, tr)
+}
+
+#' @importFrom Rcpp sourceCpp
+#' 
+test1 <- function(x) {
+    .Call(`_combinIT_test1`, x)
 }
 

@@ -74,6 +74,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// res
+arma::mat res(arma::mat x);
+RcppExport SEXP _combinIT_res(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(res(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // Bfc
 float Bfc(arma::mat x, int bl, int tr, int p);
 RcppExport SEXP _combinIT_Bfc(SEXP xSEXP, SEXP blSEXP, SEXP trSEXP, SEXP pSEXP) {
@@ -168,6 +179,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// test1
+arma::mat test1(arma::mat x);
+RcppExport SEXP _combinIT_test1(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(test1(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_combinIT_mod", (DL_FUNC) &_combinIT_mod, 2},
@@ -175,6 +197,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_combinIT_SS", (DL_FUNC) &_combinIT_SS, 4},
     {"_combinIT_Cofmat", (DL_FUNC) &_combinIT_Cofmat, 3},
     {"_combinIT_Gram", (DL_FUNC) &_combinIT_Gram, 4},
+    {"_combinIT_res", (DL_FUNC) &_combinIT_res, 1},
     {"_combinIT_Bfc", (DL_FUNC) &_combinIT_Bfc, 4},
     {"_combinIT_Bfsim", (DL_FUNC) &_combinIT_Bfsim, 4},
     {"_combinIT_picf", (DL_FUNC) &_combinIT_picf, 3},
@@ -182,6 +205,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_combinIT_C0", (DL_FUNC) &_combinIT_C0, 3},
     {"_combinIT_piephoC", (DL_FUNC) &_combinIT_piephoC, 3},
     {"_combinIT_Piephosim", (DL_FUNC) &_combinIT_Piephosim, 3},
+    {"_combinIT_test1", (DL_FUNC) &_combinIT_test1, 1},
     {NULL, NULL, 0}
 };
 
