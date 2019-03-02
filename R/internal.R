@@ -1,7 +1,7 @@
 
 
 #' This is an internal function for Boik method
-#'
+#' old
 #' @keywords internal
 #'
 B.f <-function(x,p){
@@ -15,7 +15,7 @@ B.f <-function(x,p){
 }
 
 #' internal function for Malik method
-#'
+#' 
 #' @keywords internal
 #'
 M.f <-function(x,y,block , treatment ){
@@ -30,9 +30,10 @@ M.f <-function(x,y,block , treatment ){
 }
 
 #' This is an internal function which compute Kronecker product for PIC method
+#' old
 #'
 #' @keywords internal
-#'
+#' 
 kpr <-function(bl, tr){
   wa<-combn(bl,2)
   wb<-combn(tr,2)
@@ -51,7 +52,8 @@ kpr <-function(bl, tr){
 }
 
 #' This is an internal function for PIC method
-#'
+#' old
+#' 
 #' @keywords internal
 #'
 pic.f<-function(y,kp,c0 ) {
@@ -64,7 +66,7 @@ pic.f<-function(y,kp,c0 ) {
 
 
  #' internal function for Piepho method
-#'
+#' old 
 #' @keywords internal
 #'
 piepho<-function(x,bl,tr ){

@@ -134,7 +134,8 @@ arma::vec Piephosim(int nsim,int bl, int tr){
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
-arma::mat test1(arma::mat x)
+arma::vec kkf_C(int bl)
 {
-  return x%x;
+  arma::vec Nrow = seq(2, bl);
+  return Nrow;
 }

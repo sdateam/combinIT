@@ -179,14 +179,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// test1
-arma::mat test1(arma::mat x);
-RcppExport SEXP _combinIT_test1(SEXP xSEXP) {
+// kkf_C
+arma::vec kkf_C(int bl);
+RcppExport SEXP _combinIT_kkf_C(SEXP blSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(test1(x));
+    Rcpp::traits::input_parameter< int >::type bl(blSEXP);
+    rcpp_result_gen = Rcpp::wrap(kkf_C(bl));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -205,7 +205,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_combinIT_C0", (DL_FUNC) &_combinIT_C0, 3},
     {"_combinIT_piephoC", (DL_FUNC) &_combinIT_piephoC, 3},
     {"_combinIT_Piephosim", (DL_FUNC) &_combinIT_Piephosim, 3},
-    {"_combinIT_test1", (DL_FUNC) &_combinIT_test1, 1},
+    {"_combinIT_kkf_C", (DL_FUNC) &_combinIT_kkf_C, 1},
     {NULL, NULL, 0}
 };
 

@@ -79,7 +79,7 @@ Piephosim <- function(nsim, bl, tr) {
 
 #' @importFrom Rcpp sourceCpp
 #' 
-test1 <- function(x) {
-    .Call(`_combinIT_test1`, x)
+kkf_C <- function(bl) {
+    .Call(`_combinIT_kkf_C`, bl)
 }
 
