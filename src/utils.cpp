@@ -3,23 +3,37 @@
 using namespace Rcpp;
 using namespace arma;
 // [[Rcpp::depends(RcppArmadillo)]]
-//' @importFrom Rcpp sourceCpp
 //' @useDynLib combinIT, .registration = TRUE
+//' @importFrom Rcpp sourceCpp
+//' 
+// [[Rcpp::export]]
+arma::mat res(arma::mat x) {
+  double nr = as_scalar(x.n_rows);
+  double nc = as_scalar(x.n_cols);
+  arma::vec RowMean = arma::mean(x,1);
+  arma::vec ColMean= arma::trans(arma::mean(x,0));
+  double Mean = as_scalar(arma::accu(x)/(nc*nr));
+  arma::mat y(nr,nc);
+  for(int i=0; i<nr;i++)
+  {
+    for(int j=0;j< nc;j++)
+    {
+      y(i,j) = x(i,j)-RowMean(i)-ColMean(j)+Mean; 
+    }
+  }
+  return y;
+}
+//' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
   float Bfc(arma::mat x,int bl, int tr,int p) {
   arma::vec RowMean = arma::mean(x,1);
   arma::vec ColMean= arma::trans(arma::mean(x,0));
   double Mean = arma::accu(x)/(tr*bl);
-  arma::mat y(bl,tr),yt1(bl,tr),yt2(bl,tr);
-  for(int i=0; i<bl;i++)
-    {
-      for(int j=0;j< tr;j++)
-      {
-       y(i,j) = x(i,j)-RowMean(i)-ColMean(j)+Mean; // Zahra: please correct it by yourself
-      }
-   }
- yt1 = y.t() * y;
+  arma::mat y(bl,tr); 
+  y = res(x);
+  arma::mat yt1(bl,tr),yt2(bl,tr);
+  yt1 = y.t() * y;
  yt2 = yt1*yt1;
   float Boik = arma::trace(yt1)*arma::trace(yt1) / (p*arma::trace(yt2));
   return Boik;
@@ -88,15 +102,9 @@ double piephoC(arma::mat x,int bl, int tr) {
   arma::vec RowMean = arma::mean(x,1);
   arma::vec ColMean= arma::trans(arma::mean(x,0));
   double Mean = arma::as_scalar(arma::accu(x)/(tr*bl));
-  arma::mat Res2(bl,tr);
-  for(int i=0; i<bl;i++)
-  {
-    for(int j=0;j< tr;j++)
-    {
-      double Res = arma::as_scalar(x(i,j)-RowMean(i)-ColMean(j)+Mean);
-      Res2(i,j) = Res*Res; 
-    }
-  }
+  arma::mat Res(bl,tr),Res2(bl,tr);
+  Res =res(x);
+  Res2 =Res%Res;
   arma::vec RowSum = arma::sum(Res2,1);
   arma::vec delta = (bl*(bl-1)*RowSum-sum(RowSum));
   double h1 = 0;
@@ -120,4 +128,13 @@ arma::vec Piephosim(int nsim,int bl, int tr){
     out(i)=piephoC(sam,bl,tr);
   }
   return out;
+}
+
+
+//' @importFrom Rcpp sourceCpp
+//' 
+// [[Rcpp::export]]
+arma::mat test1(arma::mat x)
+{
+  return x%x;
 }
