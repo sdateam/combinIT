@@ -8,10 +8,10 @@ using namespace arma;
 //' 
 // [[Rcpp::export]]
 arma::mat res(arma::mat x) {
-  double nr = as_scalar(x.n_rows);
-  double nc = as_scalar(x.n_cols);
+  int nr = as_scalar(x.n_rows);
+  int nc = as_scalar(x.n_cols);
   arma::vec RowMean = arma::mean(x,1);
-  arma::vec ColMean= arma::trans(arma::mean(x,0));
+  arma::vec ColMean = arma::trans(arma::mean(x,0));
   double Mean = as_scalar(arma::accu(x)/(nc*nr));
   arma::mat y(nr,nc);
   for(int i=0; i<nr;i++)
@@ -27,23 +27,19 @@ arma::mat res(arma::mat x) {
 //' 
 // [[Rcpp::export]]
   float Bfc(arma::mat x,int bl, int tr,int p) {
-  arma::vec RowMean = arma::mean(x,1);
-  arma::vec ColMean= arma::trans(arma::mean(x,0));
-  double Mean = arma::accu(x)/(tr*bl);
-  arma::mat y(bl,tr); 
+  mat y(bl,tr),yt1(bl,tr),yt2(bl,tr); 
   y = res(x);
-  arma::mat yt1(bl,tr),yt2(bl,tr);
   yt1 = y.t() * y;
- yt2 = yt1*yt1;
-  float Boik = arma::trace(yt1)*arma::trace(yt1) / (p*arma::trace(yt2));
+  yt2 = yt1*yt1;
+  float Boik = arma::trace(yt1)*arma::trace(yt1) / (p*trace(yt2));
   return Boik;
 }
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
 arma::vec Bfsim(int nsim,int bl, int tr,int p){
-  arma::mat sam(bl,tr);
-  arma::vec out(nsim);
+  mat sam(bl,tr);
+  vec out(nsim);
   for(int i=0;i<nsim;i++)
   {
     sam.randn(bl,tr);
@@ -55,21 +51,21 @@ arma::vec Bfsim(int nsim,int bl, int tr,int p){
 //' 
 // [[Rcpp::export]]
 double picf(arma::vec y,arma::mat kp,float c0){
-  arma::vec z= kp * y;
+  vec z= kp * y;
   for(unsigned int i=0;i<kp.n_rows;i++)
     z(i)=fabs(z(i));
-    arma::vec s0=median(z,0);
-    arma::uvec ids = find(z <= (5*s0(0)) );
-    arma::vec PSE=median(z.elem(ids),0);
-    arma::vec PIC=max(z,0)/PSE(0);
+    vec s0=median(z,0);
+    uvec ids = find(z <= (5*s0(0)) );
+    vec PSE=median(z.elem(ids),0);
+    vec PIC=max(z,0)/PSE(0);
     return PIC(0);
 }
 //' Module  function
 //' @importFrom Rcpp sourceCpp
 // [[Rcpp::export]]
 arma::vec PICfsim(int nsim,arma::mat kp, float c0, int n){
-  arma::vec sam(n);
-  arma::vec out(nsim);
+  vec sam(n);
+  vec out(nsim);
   for(int i=0;i<nsim;i++)
   {
     sam.randn(n);
@@ -81,17 +77,17 @@ arma::vec PICfsim(int nsim,arma::mat kp, float c0, int n){
 //'
 // [[Rcpp::export]]
 double C0(arma::mat kp, int n,int nc0){
-  arma::vec sim(nc0);
-  arma::vec norsam(n);
+  vec sim(nc0);
+  vec norsam(n);
   for(int i=0;i<nc0;i++)
   {
-    arma::vec temp=kp*norsam.randn(n);
+    vec temp=kp*norsam.randn(n);
     for(unsigned int j=0;j<temp.n_rows;j++)
       temp(j) = fabs(temp(j));
-    arma::vec me=median(temp,0);
+    vec me=median(temp,0);
     sim(i)=me(0);
   }
-  arma::vec out = mean(sim,0);
+  vec out = mean(sim,0);
   return out(0);
 }
 //' @importFrom Rcpp sourceCpp
@@ -99,14 +95,11 @@ double C0(arma::mat kp, int n,int nc0){
 //' 
 // [[Rcpp::export]]
 double piephoC(arma::mat x,int bl, int tr) {
-  arma::vec RowMean = arma::mean(x,1);
-  arma::vec ColMean= arma::trans(arma::mean(x,0));
-  double Mean = arma::as_scalar(arma::accu(x)/(tr*bl));
-  arma::mat Res(bl,tr),Res2(bl,tr);
+  mat Res(bl,tr),Res2(bl,tr);
   Res =res(x);
   Res2 =Res%Res;
-  arma::vec RowSum = arma::sum(Res2,1);
-  arma::vec delta = (bl*(bl-1)*RowSum-sum(RowSum));
+  vec RowSum = arma::sum(Res2,1);
+  vec delta = (bl*(bl-1)*RowSum-sum(RowSum));
   double h1 = 0;
   for(int i=0;i< (bl-1);i++)
     for(int j=i+1; j < bl ; j++)
@@ -120,8 +113,8 @@ double piephoC(arma::mat x,int bl, int tr) {
 //' 
 // [[Rcpp::export]]
 arma::vec Piephosim(int nsim,int bl, int tr){
-  arma::mat sam(bl,tr);
-  arma::vec out(nsim);
+  mat sam(bl,tr);
+  vec out(nsim);
   for(int i=0;i<nsim;i++)
   {
     sam.randn(bl,tr);
@@ -130,11 +123,65 @@ arma::vec Piephosim(int nsim,int bl, int tr){
   return out;
 }
 
+//' @importFrom Rcpp sourceCpp
+//' 
+// [[Rcpp::export]]
+arma::umat mycombn(int n, int k) {
+  double n_subsets = Rf_choose(n, k);
+  umat out = zeros<umat>(k, n_subsets);
+  uvec a = linspace<uvec>(1, k, k);  
+  out.col(0) = a;
+  int m = 0;
+  int h = k;
+  uvec j;
+  for(long long i = 1; i < n_subsets; i++){
+    if(m < (n - h)){  
+      h = 1;
+      m = a(k - 1);
+      j = linspace<uvec>(1, 1, 1);
+    }
+    else{
+      m = a(k - h - 1);
+      ++h;
+      j = linspace<uvec>(1, h, h);
+    }
+    a.elem(k - h - 1 + j) = m + j;
+    out.col(i) = a;
+  }
+  return(out);
+}
 
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
-arma::mat test1(arma::mat x)
+arma::mat kkf_C(arma::mat x,int bl, int tr)
 {
-  return x%x;
+  //IntegerVector Nrow =  seq(2, floor(bl/2));
+   //return as<NumericVector>(Nrow); 
+   vec fvalues ();
+   vec pvalues();
+   mat yb1,yb2;
+   int count = 0;
+   for(int i=1; i< floor(bl/2);i++){
+     umat ind = mycombn(bl,i+1) -1 ;
+     int Nsplit = ind.n_cols;
+    if((bl/2)== (i)) Nsplit = Nsplit/2;
+     for(int j=0;j<Nsplit;j++){
+       count ++;
+        yb1 = x.rows(ind.col(j));
+        vec colj = ind.col(j);
+        IntegerVector col_j = seq(1,ind.n_cols) 
+        yb2 = x.rows();
+       //rss1<-sum(( t(yb1 - apply(yb1, 1, mean) + mean(yb1)) - apply(yb1, 2, mean))^2)
+       //rss2<-sum(( t(yb2 - apply(yb2, 1, mean) + mean(yb2)) - apply(yb2, 2, mean))^2)
+       //dfn<-(tr-1)*(i-1)
+       //dfd<-(bl-i-1)*(tr-1)
+       //fvalues[count]<-(rss1*(bl-i-1))/(rss2*(i-1))
+       //if(fvalues[count]<1)fvalues[count]<-1/fvalues[count]
+       //pvalues[count]<-1-pf(fvalues[count],dfn,dfd)+pf(1/fvalues[count],dfn,dfd)
+     }
+   }
+   //KKSA<-min(pvalues)
+     return yb2;
+   
 }

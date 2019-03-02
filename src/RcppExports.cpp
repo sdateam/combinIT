@@ -6,6 +6,18 @@
 
 using namespace Rcpp;
 
+// Seq
+IntegerVector Seq(int a, int b);
+RcppExport SEXP _combinIT_Seq(SEXP aSEXP, SEXP bSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type a(aSEXP);
+    Rcpp::traits::input_parameter< int >::type b(bSEXP);
+    rcpp_result_gen = Rcpp::wrap(Seq(a, b));
+    return rcpp_result_gen;
+END_RCPP
+}
 // mod
 NumericVector mod(int K, int W);
 RcppExport SEXP _combinIT_mod(SEXP KSEXP, SEXP WSEXP) {
@@ -179,19 +191,34 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// test1
-arma::mat test1(arma::mat x);
-RcppExport SEXP _combinIT_test1(SEXP xSEXP) {
+// mycombn
+arma::umat mycombn(int n, int k);
+RcppExport SEXP _combinIT_mycombn(SEXP nSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(mycombn(n, k));
+    return rcpp_result_gen;
+END_RCPP
+}
+// kkf_C
+arma::mat kkf_C(arma::mat x, int bl, int tr);
+RcppExport SEXP _combinIT_kkf_C(SEXP xSEXP, SEXP blSEXP, SEXP trSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(test1(x));
+    Rcpp::traits::input_parameter< int >::type bl(blSEXP);
+    Rcpp::traits::input_parameter< int >::type tr(trSEXP);
+    rcpp_result_gen = Rcpp::wrap(kkf_C(x, bl, tr));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_combinIT_Seq", (DL_FUNC) &_combinIT_Seq, 2},
     {"_combinIT_mod", (DL_FUNC) &_combinIT_mod, 2},
     {"_combinIT_Csij", (DL_FUNC) &_combinIT_Csij, 5},
     {"_combinIT_SS", (DL_FUNC) &_combinIT_SS, 4},
@@ -205,7 +232,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_combinIT_C0", (DL_FUNC) &_combinIT_C0, 3},
     {"_combinIT_piephoC", (DL_FUNC) &_combinIT_piephoC, 3},
     {"_combinIT_Piephosim", (DL_FUNC) &_combinIT_Piephosim, 3},
-    {"_combinIT_test1", (DL_FUNC) &_combinIT_test1, 1},
+    {"_combinIT_mycombn", (DL_FUNC) &_combinIT_mycombn, 2},
+    {"_combinIT_kkf_C", (DL_FUNC) &_combinIT_kkf_C, 3},
     {NULL, NULL, 0}
 };
 
