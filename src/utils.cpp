@@ -169,9 +169,7 @@ arma::mat kkf_C(arma::mat x,int bl, int tr)
      for(int j=0;j<Nsplit;j++){
        count ++;
         yb1 = x.rows(ind.col(j));
-        vec colj = ind.col(j);
-        IntegerVector col_j = seq(1,ind.n_cols) 
-        yb2 = x.rows();
+        yb2 = x.rows(ind.col(j));
        //rss1<-sum(( t(yb1 - apply(yb1, 1, mean) + mean(yb1)) - apply(yb1, 2, mean))^2)
        //rss2<-sum(( t(yb2 - apply(yb2, 1, mean) + mean(yb2)) - apply(yb2, 2, mean))^2)
        //dfn<-(tr-1)*(i-1)
@@ -184,4 +182,6 @@ arma::mat kkf_C(arma::mat x,int bl, int tr)
    //KKSA<-min(pvalues)
      return yb2;
    
+   
+  
 }
