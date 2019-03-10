@@ -203,6 +203,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// logical_index
+Rcpp::LogicalVector logical_index(Rcpp::IntegerVector idx, R_xlen_t n);
+RcppExport SEXP _combinIT_logical_index(SEXP idxSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type idx(idxSEXP);
+    Rcpp::traits::input_parameter< R_xlen_t >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(logical_index(idx, n));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Subset
+Rcpp::NumericVector Subset(Rcpp::NumericVector x, Rcpp::IntegerVector idx);
+RcppExport SEXP _combinIT_Subset(SEXP xSEXP, SEXP idxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type idx(idxSEXP);
+    rcpp_result_gen = Rcpp::wrap(Subset(x, idx));
+    return rcpp_result_gen;
+END_RCPP
+}
 // kkf_C
 arma::mat kkf_C(arma::mat x, int bl, int tr);
 RcppExport SEXP _combinIT_kkf_C(SEXP xSEXP, SEXP blSEXP, SEXP trSEXP) {
@@ -233,6 +257,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_combinIT_piephoC", (DL_FUNC) &_combinIT_piephoC, 3},
     {"_combinIT_Piephosim", (DL_FUNC) &_combinIT_Piephosim, 3},
     {"_combinIT_mycombn", (DL_FUNC) &_combinIT_mycombn, 2},
+    {"_combinIT_logical_index", (DL_FUNC) &_combinIT_logical_index, 2},
+    {"_combinIT_Subset", (DL_FUNC) &_combinIT_Subset, 2},
     {"_combinIT_kkf_C", (DL_FUNC) &_combinIT_kkf_C, 3},
     {NULL, NULL, 0}
 };

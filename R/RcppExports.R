@@ -87,6 +87,14 @@ mycombn <- function(n, k) {
     .Call(`_combinIT_mycombn`, n, k)
 }
 
+logical_index <- function(idx, n) {
+    .Call(`_combinIT_logical_index`, idx, n)
+}
+
+Subset <- function(x, idx) {
+    .Call(`_combinIT_Subset`, x, idx)
+}
+
 #' @importFrom Rcpp sourceCpp
 #' 
 kkf_C <- function(x, bl, tr) {

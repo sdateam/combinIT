@@ -5,6 +5,9 @@ IntegerVector Seq(int a, int b) {
   IntegerVector vec =  seq(a, b);
   return vec;
 }
+
+
+
 //' Module  function
 //' @importFrom Rcpp sourceCpp
 // [[Rcpp::export]]

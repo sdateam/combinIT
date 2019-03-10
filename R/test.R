@@ -98,8 +98,8 @@ Malik.test <- function(x, nsim=500) {
     tr <- ncol(x)
     bl <- nrow(x)
     n <- tr * bl
-    block <- gl(bl, tr)
-    treatment <- gl(tr, 1, bl * tr)
+    block <- gl(bl, tr)                        #block<-rep(1:bl, each=tr)
+    treatment <- gl(tr, 1, bl * tr)            #treatment<-rep(1:tr,bl)
     y <- c(t(x))
     statistics <-M.f(x,y,block , treatment)
     simu <-rep(0,0)
@@ -287,11 +287,48 @@ KKSA.test<-function(x,nsim=1000,distr = "sim",...){
 
     } else{
       cck <- 2^(bl - 1) - 1 - bl
-      statistics <-kk.f(x,bl,tr)
+      statistics <-kkf_C(x,bl,tr)
       if(distr != "sim" && distr != "asy") distr="sim"
 
       if (distr == "sim")
        {
+        simu<-KKsim(nsim,bl,tr)
+          
+        KKSA.p <- mean(statistics > simu)
+      } else if (distr == "asy") {
+        KKSA.p<-statistics*cck
+        KKSA.p<- min(1,KKSA.p)
+       }
+      out <- list(pvalue = KKSA.p,
+                nsim = nsim,distr=distr,
+                statistics = statistics)
+      return(out)
+    }
+  }
+}
+
+#' @export
+KKSA.test.old<-function(x,nsim=1000,distr = "sim",...){
+  
+  if(!is.matrix(x)){
+    stop("The input should be a matrix")
+  } else {
+    bl <- nrow(x)
+    tr <- ncol(x)
+    n<-tr * bl
+    if (bl < tr)
+    {warning("transpose the input matrix")
+      x<-t(x);te<-bl;bl<-tr;tr<-te}
+    if (bl < 4) {
+      stop("KKSA needs at least 4 levels of blocking factor")
+      
+    } else{
+      cck <- 2^(bl - 1) - 1 - bl
+      statistics <-kk.f(x,bl,tr)
+      if(distr != "sim" && distr != "asy") distr="sim"
+      
+      if (distr == "sim")
+      {
         simu <-rep(0,0)
         for (i in 1:nsim){
           simu[i]<-kk.f(matrix(rnorm(n),nrow=bl),bl,tr)
@@ -304,10 +341,10 @@ KKSA.test<-function(x,nsim=1000,distr = "sim",...){
       } else if (distr == "asy") {
         KKSA.p<-statistics*cck
         KKSA.p<- min(1,KKSA.p)
-       }
+      }
       out <- list(pvalue = KKSA.p,
-                nsim = nsim,distr=distr,
-                statistics = statistics)
+                  nsim = nsim,distr=distr,
+                  statistics = statistics)
       return(out)
     }
   }
@@ -346,21 +383,14 @@ hiddenf.test<-function(x,nsim=1000,dist = "sim",...){
     if (bl < 3) {
       stop("hiddenf needs at least 3 levels of blocking factor")
 
-    }else{
+    } else{
      cch <- 2^(bl - 1) - 1
-     statistics <-hh.f(x,bl)
+     statistics <-hf_C(x,bl,tr)
      if(dist != "sim" || dist != "asy") dist="sim"
 
      if (dist == "sim")
      {
-       simu <-rep(0,0)
-       for (i in 1:nsim){
-         simu[i]<-hh.f(matrix(rnorm(n),nrow=bl),bl)
-         cat(paste(round(i / nsim * 100), '% completed'))
-         #Sys.sleep(.1)
-         if (i == nsim) cat(': Done')
-         else cat('\014')
-       }
+       simu <-hfsim(nsim,bl,tr)
        hidden <- mean(statistics < simu)
      } else if (dist == "asy") {
        adjpvalue<-(1-pf(statistics,(tr-1),(tr-1)*(bl-2)))*cch
@@ -373,6 +403,49 @@ hiddenf.test<-function(x,nsim=1000,dist = "sim",...){
      }
    }
 }
+
+#' @export
+hiddenf.test.old<-function(x,nsim=1000,dist = "sim",...){
+  
+  if(!is.matrix(x)){
+    stop("The input should be a matrix")
+  } else {
+    bl <- nrow(x)
+    tr <- ncol(x)
+    n<-tr * bl
+    if (bl < tr) {warning("transpose the input matrix")
+      x<-t(x);te<-bl;bl<-tr;tr<-te}
+    if (bl < 3) {
+      stop("hiddenf needs at least 3 levels of blocking factor")
+      
+    }else{
+      cch <- 2^(bl - 1) - 1
+      statistics <-hh.f(x,bl)
+      if(dist != "sim" || dist != "asy") dist="sim"
+      
+      if (dist == "sim")
+      {
+        simu <-rep(0,0)
+        for (i in 1:nsim){
+          simu[i]<-hh.f(matrix(rnorm(n),nrow=bl),bl)
+          cat(paste(round(i / nsim * 100), '% completed'))
+          #Sys.sleep(.1)
+          if (i == nsim) cat(': Done')
+          else cat('\014')
+        }
+        hidden <- mean(statistics < simu)
+      } else if (dist == "asy") {
+        adjpvalue<-(1-pf(statistics,(tr-1),(tr-1)*(bl-2)))*cch
+        hidden<- min(1,adjpvalue)
+      }
+      out <- list(pvalue = hidden,
+                  nsim = nsim,dist=dist
+                  ,statistics = statistics)
+      return(out)
+    }
+  }
+}
+
 
 #' Combined several interaction tests
 #'
@@ -412,59 +485,37 @@ combinep<-function(x,nsim=500,nc0=10000,...){
 
     }else{
     n <- tr * bl
-    block <- gl(bl, tr)
-    treatment <- gl(tr, 1, bl * tr)
+    block <- gl(bl, tr)              #block<-rep(1:bl, each=tr)
+    treatment <- gl(tr, 1, bl * tr)  #treatment<-rep(1:tr,bl)
     p <- min(tr - 1, bl - 1)
     q <- max(tr - 1, bl - 1)
     cck <- 2^(bl - 1) - 1 - bl
     cch <- 2^(bl - 1) - 1
-    kp <- kpr(bl, tr)
-    c0<-mean(replicate(nc0,{median(abs(kp%*%rnorm(n)))}))
-
-    sta<-bmp.f(x,y, block , treatment,bl,tr,p)
-
-    Bstat <-sta$Boik
-    Mstat <-sta$Tc
-    pistat<-sta$piepho
-    pstat <-pic.f(y,kp,c0)
-    if(bl==3)Hstat<-hh.f(x,bl)
-    else{
-      Ksimu <-rep(0,0)
-      kh<-kh.f(x,bl,tr)
-      Kstat<-kh$fmin
-      Hstat<-kh$fmax
-    }
-
-      Bsimu <-Msimu <-psimu <-pisimu <-Hsimu <-rep(0,0)
-      for (i in 1:nsim){
-        y<-rnorm(n)
-        x<-matrix(y,nrow = bl,byrow=TRUE)
-        sta<-bmp.f(x,y, block , treatment,bl,tr,p)
-        Bsimu[i]<-sta$Boik
-        Msimu[i]<-sta$Tc
-        pisimu[i]<-sta$piepho
-        psimu[i]<-pic.f(y,kp,c0)
-        if(bl==3)
-          Hsimu[i]<-hh.f(x,bl)else{
-        kh<-kh.f(x,bl,tr)
-        Ksimu[i]<-kh$fmin
-        Hsimu[i]<-kh$fmax
-          }
-        cat(paste(round(i / nsim * 100), '% completed'))
-        Sys.sleep(.1)
-        if (i == nsim) cat(': Done')
-        else cat('\014')
-      }
-      Boik.pvalue <- mean(Bstat > Bsimu)
-      piepho.pvalue <- mean(pistat < pisimu)
-      PIC.pvalue <- mean(pstat < psimu)
-      Malik.pvalue <- mean(Mstat < Msimu)
-      hiddenf.pvalue <- mean(Hstat < Hsimu)
-      if(bl==3)
-        KKSA.pvalue<- NULL else{
-
-        KKSA.pvalue<- mean(Kstat > Ksimu)
-      }
+    kp<- kpr(bl, tr)
+    c0<-C0(kp,n,nc0)
+    #--------------
+    Bstat <-Bfc(x,bl,tr,p)
+    Bsimu <- Bfsim(nsim,bl,tr,p)
+    Boik.pvalue <- mean(Bstat > Bsimu)
+    #--------------------
+    pistat <-piephoC(x,bl,tr)
+    pisimu <- Piephosim(nsim,bl,tr)
+    piepho.pvalue <- mean(pistat < pisimu)
+    #-----------------------
+    pstat <-picf(y,kp,c0)
+    psimu <- PICfsim(nsim,kp,c0,n)
+    PIC.pvalue <- mean(pstat < psimu)
+    #-------------------
+    Malik.pvalue <- mean(Mstat < Msimu)
+    #-------------------
+    Hstat <-hf_C(x,bl,tr)
+    Hsimu <-hfsim(nsim,bl,tr)
+    hiddenf.pvalue <- mean(Hstat < Hsimu)
+    #--------------------------
+    Kstat <-kkf_C(x,bl,tr)
+    Ksimu<-KKsim(nsim,bl,tr)
+    KKSA.pvalue<- mean(Kstat > Ksimu)
+      
     pvalues <- c(Boik.pvalue,piepho.pvalue,hiddenf.pvalue,Malik.pvalue,PIC.pvalue,KKSA.pvalue)
     cp<-comb(pvalues)
     Bonferroni<-cp$Bon
@@ -477,6 +528,87 @@ combinep<-function(x,nsim=500,nc0=10000,...){
          Bonferroni=Bonferroni,Sidak=Sidak,jacobi=jacobi,GC=GC)
     }
   }
+
+#' @export
+combinep.old<-function(x,nsim=500,nc0=10000,...){
+  if (!is.matrix(x)) {
+    stop("The input should be a matrix")
+  } else {
+    y <- c(t(x))
+    tr <- ncol(x)
+    bl <- nrow(x)
+    if (bl < tr) warning("transpose the input matrix")
+    x<-t(x);te<-bl;bl<-tr;tr<-te}
+  if (bl < 3) {
+    stop("hiddenf needs at least 3 levels of blocking factor")
+    
+  }else{
+    n <- tr * bl
+    block <- gl(bl, tr)              #block<-rep(1:bl, each=tr)
+    treatment <- gl(tr, 1, bl * tr)  #treatment<-rep(1:tr,bl)
+    p <- min(tr - 1, bl - 1)
+    q <- max(tr - 1, bl - 1)
+    cck <- 2^(bl - 1) - 1 - bl
+    cch <- 2^(bl - 1) - 1
+    kp <- kpr(bl, tr)
+    c0<-mean(replicate(nc0,{median(abs(kp%*%rnorm(n)))}))
+    
+    sta<-bmp.f(x,y, block , treatment,bl,tr,p)
+    
+    Bstat <-sta$Boik
+    Mstat <-sta$Tc
+    pistat<-sta$piepho
+    pstat <-pic.f(y,kp,c0)
+    if(bl==3)Hstat<-hh.f(x,bl)
+    else{
+      Ksimu <-rep(0,0)
+      kh<-kh.f(x,bl,tr)
+      Kstat<-kh$fmin
+      Hstat<-kh$fmax
+    }
+    
+    Bsimu <-Msimu <-psimu <-pisimu <-Hsimu <-rep(0,0)
+    for (i in 1:nsim){
+      y<-rnorm(n)
+      x<-matrix(y,nrow = bl,byrow=TRUE)
+      sta<-bmp.f(x,y, block , treatment,bl,tr,p)
+      Bsimu[i]<-sta$Boik
+      Msimu[i]<-sta$Tc
+      pisimu[i]<-sta$piepho
+      psimu[i]<-pic.f(y,kp,c0)
+      if(bl==3)
+        Hsimu[i]<-hh.f(x,bl)else{
+          kh<-kh.f(x,bl,tr)
+          Ksimu[i]<-kh$fmin
+          Hsimu[i]<-kh$fmax
+        }
+      cat(paste(round(i / nsim * 100), '% completed'))
+      Sys.sleep(.1)
+      if (i == nsim) cat(': Done')
+      else cat('\014')
+    }
+    Boik.pvalue <- mean(Bstat > Bsimu)
+    piepho.pvalue <- mean(pistat < pisimu)
+    PIC.pvalue <- mean(pstat < psimu)
+    Malik.pvalue <- mean(Mstat < Msimu)
+    hiddenf.pvalue <- mean(Hstat < Hsimu)
+    if(bl==3)
+      KKSA.pvalue<- NULL else{
+        
+        KKSA.pvalue<- mean(Kstat > Ksimu)
+      }
+    pvalues <- c(Boik.pvalue,piepho.pvalue,hiddenf.pvalue,Malik.pvalue,PIC.pvalue,KKSA.pvalue)
+    cp<-comb(pvalues)
+    Bonferroni<-cp$Bon
+    GC<-cp$GC
+    Sidak<-cp$Sidak
+    jacobi<-cp$jacobi
+    list(nsim=nsim,piepho.pvalue=piepho.pvalue,Boik.pvalue=Boik.pvalue
+         ,Malik.pvalue=Malik.pvalue,PIC.pvalue=PIC.pvalue
+         ,KKSA.pvalue=KKSA.pvalue,hiddenf.pvalue=hiddenf.pvalue,
+         Bonferroni=Bonferroni,Sidak=Sidak,jacobi=jacobi,GC=GC)
+  }
+}
 
 
 #' Interaction plot

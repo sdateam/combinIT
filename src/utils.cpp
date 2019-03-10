@@ -83,7 +83,7 @@ double C0(arma::mat kp, int n,int nc0){
   {
     vec temp=kp*norsam.randn(n);
     for(unsigned int j=0;j<temp.n_rows;j++)
-      temp(j) = fabs(temp(j));
+    temp(j) = fabs(temp(j));
     vec me=median(temp,0);
     sim(i)=me(0);
   }
@@ -151,6 +151,27 @@ arma::umat mycombn(int n, int k) {
   return(out);
 }
 
+// [[Rcpp::export]]
+Rcpp::LogicalVector logical_index(Rcpp::IntegerVector idx, R_xlen_t n) {
+  bool invert = false; 
+  Rcpp::LogicalVector result(n, false);
+  
+  for (R_xlen_t i = 0; i < idx.size(); i++) {
+    if (!invert && idx[i] < 0) invert = true;
+    result[std::abs(idx[i])] = true;
+  }
+  
+  if (!invert) return result;
+  return !result;
+}
+
+
+// [[Rcpp::export]]
+Rcpp::NumericVector 
+  Subset(Rcpp::NumericVector x, Rcpp::IntegerVector idx) {
+    return x[logical_index(idx, x.size())];
+  }
+
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
@@ -158,30 +179,93 @@ arma::mat kkf_C(arma::mat x,int bl, int tr)
 {
   //IntegerVector Nrow =  seq(2, floor(bl/2));
    //return as<NumericVector>(Nrow); 
-   vec fvalues ();
+   //vec fvalues ();
    vec pvalues();
    mat yb1,yb2;
    int count = 0;
    for(int i=1; i< floor(bl/2);i++){
-     umat ind = mycombn(bl,i+1) -1 ;
-     int Nsplit = ind.n_cols;
+    umat ind = mycombn(bl,i+1) -1 ;
+    int Nsplit = ind.n_cols;
     if((bl/2)== (i)) Nsplit = Nsplit/2;
      for(int j=0;j<Nsplit;j++){
-       count ++;
-        yb1 = x.rows(ind.col(j));
-        yb2 = x.rows(ind.col(j));
-       //rss1<-sum(( t(yb1 - apply(yb1, 1, mean) + mean(yb1)) - apply(yb1, 2, mean))^2)
-       //rss2<-sum(( t(yb2 - apply(yb2, 1, mean) + mean(yb2)) - apply(yb2, 2, mean))^2)
-       //dfn<-(tr-1)*(i-1)
-       //dfd<-(bl-i-1)*(tr-1)
-       //fvalues[count]<-(rss1*(bl-i-1))/(rss2*(i-1))
-       //if(fvalues[count]<1)fvalues[count]<-1/fvalues[count]
-       //pvalues[count]<-1-pf(fvalues[count],dfn,dfd)+pf(1/fvalues[count],dfn,dfd)
+       count ++; 
+        yb1 = x.rows(ind.col(j)); 
+        yb2 = x.rows(Subset(seq(1,bl),-1*ind.col(j)));
+        double rss1 = as_scalar(sum(pow(res(yb1),2)));
+        double rss2 = as_scalar(sum(pow(res(yb2),2)));
+        int dfn = (tr-1)*(i-1);
+        int dfd = (bl-i-1)*(tr-1);
+        double fvalues = (rss1*(bl-i-1))/(rss2*(i-1));
+        if(fvalues<1) fvalues = 1/fvalues;
+        //double a = as_scalar(1-pf(fvalues,dfn,dfd)+pf(1/fvalues,dfn,dfd));
+        //pvalues(count) = 3;
      }
    }
-   //KKSA<-min(pvalues)
-     return yb2;
-   
-   
+  // double KKSA = min(pvalues,0);
+   return yb2;
+ }
+/*
+//' @importFrom Rcpp sourceCpp
+//' 
+// [[Rcpp::export]]
+arma::vec KKsim(int nsim,int bl, int tr){
+  mat sam(bl,tr);
+  vec out(nsim);
+  for(int i=0;i<nsim;i++)
+  {
+    sam.randn(bl,tr);
+    out(i)=kkf_C(sam,bl,tr);
+  }
+  return out;
+}
+
+//' @importFrom Rcpp sourceCpp
+//' 
+// [[Rcpp::export]]
+double hf_C(arma::mat x,int bl, int tr)
+{
+  double sse =as_scalar(sum(pow(res(x),2))); 
+  vec hvalues();
+  mat yb1,yb2;
+  int count = 0;
+  for(int i=1; i< floor(bl/2);i++){
+    umat ind = mycombn(bl,i+1) -1 ;
+    int Nsplit = ind.n_cols;
+    if((bl/2)== (i)) Nsplit = Nsplit/2;
+    for(int j=0;j<Nsplit;j++){
+      count ++;
+      yb1 = x.rows(ind.col(j));               // check
+      yb2 = x.rows(ind.col(j));
+      double rss1 = as_scalar(sum(pow(res(yb1),2)));
+      double rss2 = as_scalar(sum(pow(res(yb2),2)));
+      double sse7  = rss1+rss2;
+      hvalues(count) = (sse-sse7)*(bl-2)/sse7;
+      
+    }
+  }
+  for(int i=0; i< bl;i++){
+    count ++;
+    yb1 = x.rows(-i);
+    double rss7 = as_scalar(sum(pow(res(yb1),2)));
+    hvalues(count) = (sse-sse7)*(bl-2)/sse7;
+  }
+  
+  double fmax = max(hvalues,0);
+  return(fmax);
   
 }
+
+//' @importFrom Rcpp sourceCpp
+//' 
+// [[Rcpp::export]]
+arma::vec hfsim(int nsim,int bl, int tr){
+  mat sam(bl,tr);
+  vec out(nsim);
+  for(int i=0;i<nsim;i++)
+  {
+    sam.randn(bl,tr);
+    out(i)=hf_C(sam,bl,tr);
+  }
+  return out;
+}
+*/ 
