@@ -3,6 +3,7 @@
 using namespace Rcpp;
 using namespace arma;
 // [[Rcpp::depends(RcppArmadillo)]]
+
 //' @useDynLib combinIT, .registration = TRUE
 //' @importFrom Rcpp sourceCpp
 //' 
@@ -23,6 +24,7 @@ arma::mat res(arma::mat x) {
   }
   return y;
 }
+
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
@@ -34,6 +36,7 @@ arma::mat res(arma::mat x) {
   float Boik = arma::trace(yt1)*arma::trace(yt1) / (p*trace(yt2));
   return Boik;
 }
+
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
@@ -73,6 +76,7 @@ arma::vec PICfsim(int nsim,arma::mat kp, float c0, int n){
   }
   return out;
 }
+
 //' @importFrom Rcpp sourceCpp
 //'
 // [[Rcpp::export]]
@@ -90,6 +94,7 @@ double C0(arma::mat kp, int n,int nc0){
   vec out = mean(sim,0);
   return out(0);
 }
+
 //' @importFrom Rcpp sourceCpp
 //' @useDynLib combinIT
 //' 
@@ -151,6 +156,8 @@ arma::umat mycombn(int n, int k) {
   return(out);
 }
 
+//' @importFrom Rcpp sourceCpp
+//' 
 // [[Rcpp::export]]
 Rcpp::LogicalVector logical_index(Rcpp::IntegerVector idx, R_xlen_t n) {
   bool invert = false; 
@@ -164,13 +171,15 @@ Rcpp::LogicalVector logical_index(Rcpp::IntegerVector idx, R_xlen_t n) {
   return !result;
 }
 
-
+//' @importFrom Rcpp sourceCpp
+//' 
 // [[Rcpp::export]]
 NumericVector  Subset(Rcpp::NumericVector x, Rcpp::IntegerVector idx) {
     return x[logical_index(idx, x.size())];
   }
 
 //' @importFrom Rcpp sourceCpp
+//' @useDynLib combinIT
 //' 
 // [[Rcpp::export]]
 double kkf_C(arma::mat x,int bl, int tr)
@@ -213,18 +222,20 @@ double kkf_C(arma::mat x,int bl, int tr)
  }
 
 //' @importFrom Rcpp sourceCpp
+//' @useDynLib combinIT
 //' 
 // [[Rcpp::export]]
-arma::vec KKsim(int nsim,int bl, int tr){
+NumericVector KKsim(int nsim,int bl, int tr){
   mat sam(bl,tr);
-  vec out(nsim);
-  for(int i=0;i<nsim;i++)
+  NumericVector out(nsim);
+  for(int i=0;i< nsim;i++)
   {
     sam.randn(bl,tr);
-    out(i)=kkf_C(sam,bl,tr);
+    out(i) = kkf_C(sam,bl,tr);
   }
   return out;
 }
+
 /*
 //' @importFrom Rcpp sourceCpp
 //' 

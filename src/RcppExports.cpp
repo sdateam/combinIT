@@ -241,7 +241,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // KKsim
-arma::vec KKsim(int nsim, int bl, int tr);
+NumericVector KKsim(int nsim, int bl, int tr);
 RcppExport SEXP _combinIT_KKsim(SEXP nsimSEXP, SEXP blSEXP, SEXP trSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

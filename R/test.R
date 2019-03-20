@@ -272,13 +272,12 @@ piepho.test.old<-function(x,nsim=1000,...){
 #' KKSA.test(impurity,nsim=1000,dist = "sim")
 #' @export
 KKSA.test<-function(x,nsim=1000,distr = "sim",...){
-
   if(!is.matrix(x)){
     stop("The input should be a matrix")
   } else {
     bl <- nrow(x)
     tr <- ncol(x)
-    n<-tr * bl
+    n<- tr * bl
     if (bl < tr)
     {warning("transpose the input matrix")
       x<-t(x);te<-bl;bl<-tr;tr<-te}
@@ -287,12 +286,11 @@ KKSA.test<-function(x,nsim=1000,distr = "sim",...){
 
     } else{
       cck <- 2^(bl - 1) - 1 - bl
-      statistics <-kkf_C(x,bl,tr)
+      statistics <- combinIT:::kkf_C(x,bl,tr)
       if(distr != "sim" && distr != "asy") distr="sim"
-
       if (distr == "sim")
        {
-        simu<-KKsim(nsim,bl,tr)
+        simu <- combinIT:::KKsim(nsim,bl,tr)
         KKSA.p <- mean(statistics > simu)
       } else if (distr == "asy") {
         KKSA.p<-statistics*cck
@@ -325,7 +323,6 @@ KKSA.test.old<-function(x,nsim=1000,distr = "sim",...){
       cck <- 2^(bl - 1) - 1 - bl
       statistics <-kk.f(x,bl,tr)
       if(distr != "sim" && distr != "asy") distr="sim"
-      
       if (distr == "sim")
       {
         simu <-rep(0,0)

@@ -87,21 +87,27 @@ mycombn <- function(n, k) {
     .Call(`_combinIT_mycombn`, n, k)
 }
 
+#' @importFrom Rcpp sourceCpp
+#' 
 logical_index <- function(idx, n) {
     .Call(`_combinIT_logical_index`, idx, n)
 }
 
+#' @importFrom Rcpp sourceCpp
+#' 
 Subset <- function(x, idx) {
     .Call(`_combinIT_Subset`, x, idx)
 }
 
 #' @importFrom Rcpp sourceCpp
+#' @useDynLib combinIT
 #' 
 kkf_C <- function(x, bl, tr) {
     .Call(`_combinIT_kkf_C`, x, bl, tr)
 }
 
 #' @importFrom Rcpp sourceCpp
+#' @useDynLib combinIT
 #' 
 KKsim <- function(nsim, bl, tr) {
     .Call(`_combinIT_KKsim`, nsim, bl, tr)
