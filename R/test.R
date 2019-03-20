@@ -293,7 +293,6 @@ KKSA.test<-function(x,nsim=1000,distr = "sim",...){
       if (distr == "sim")
        {
         simu<-KKsim(nsim,bl,tr)
-          
         KKSA.p <- mean(statistics > simu)
       } else if (distr == "asy") {
         KKSA.p<-statistics*cck

@@ -216,7 +216,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // Subset
-Rcpp::NumericVector Subset(Rcpp::NumericVector x, Rcpp::IntegerVector idx);
+NumericVector Subset(Rcpp::NumericVector x, Rcpp::IntegerVector idx);
 RcppExport SEXP _combinIT_Subset(SEXP xSEXP, SEXP idxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -228,7 +228,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kkf_C
-arma::mat kkf_C(arma::mat x, int bl, int tr);
+double kkf_C(arma::mat x, int bl, int tr);
 RcppExport SEXP _combinIT_kkf_C(SEXP xSEXP, SEXP blSEXP, SEXP trSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

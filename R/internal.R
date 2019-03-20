@@ -107,8 +107,8 @@ kk.f<-function(x,bl,tr){
       dfn<-(tr-1)*(i-1)
       dfd<-(bl-i-1)*(tr-1)
       fvalues[count]<-(rss1*(bl-i-1))/(rss2*(i-1))
-      if(fvalues[count]<1)fvalues[count]<-1/fvalues[count]
-      pvalues[count]<-1-pf(fvalues[count],dfn,dfd)+pf(1/fvalues[count],dfn,dfd)
+      if(fvalues[count]<1) fvalues[count]<- 1/fvalues[count]
+      pvalues[count]<-1- pf(fvalues[count],dfn,dfd)+pf(1/fvalues[count],dfn,dfd)
      }
    }
   KKSA<-min(pvalues)
