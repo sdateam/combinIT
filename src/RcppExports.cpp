@@ -216,7 +216,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // Subset
-Rcpp::NumericVector Subset(Rcpp::NumericVector x, Rcpp::IntegerVector idx);
+NumericVector Subset(Rcpp::NumericVector x, Rcpp::IntegerVector idx);
 RcppExport SEXP _combinIT_Subset(SEXP xSEXP, SEXP idxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -228,7 +228,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // kkf_C
-arma::mat kkf_C(arma::mat x, int bl, int tr);
+double kkf_C(arma::mat x, int bl, int tr);
 RcppExport SEXP _combinIT_kkf_C(SEXP xSEXP, SEXP blSEXP, SEXP trSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -237,6 +237,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type bl(blSEXP);
     Rcpp::traits::input_parameter< int >::type tr(trSEXP);
     rcpp_result_gen = Rcpp::wrap(kkf_C(x, bl, tr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// KKsim
+arma::vec KKsim(int nsim, int bl, int tr);
+RcppExport SEXP _combinIT_KKsim(SEXP nsimSEXP, SEXP blSEXP, SEXP trSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type nsim(nsimSEXP);
+    Rcpp::traits::input_parameter< int >::type bl(blSEXP);
+    Rcpp::traits::input_parameter< int >::type tr(trSEXP);
+    rcpp_result_gen = Rcpp::wrap(KKsim(nsim, bl, tr));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -260,6 +273,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_combinIT_logical_index", (DL_FUNC) &_combinIT_logical_index, 2},
     {"_combinIT_Subset", (DL_FUNC) &_combinIT_Subset, 2},
     {"_combinIT_kkf_C", (DL_FUNC) &_combinIT_kkf_C, 3},
+    {"_combinIT_KKsim", (DL_FUNC) &_combinIT_KKsim, 3},
     {NULL, NULL, 0}
 };
 

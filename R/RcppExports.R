@@ -101,3 +101,9 @@ kkf_C <- function(x, bl, tr) {
     .Call(`_combinIT_kkf_C`, x, bl, tr)
 }
 
+#' @importFrom Rcpp sourceCpp
+#' 
+KKsim <- function(nsim, bl, tr) {
+    .Call(`_combinIT_KKsim`, nsim, bl, tr)
+}
+

@@ -155,7 +155,6 @@ arma::umat mycombn(int n, int k) {
 Rcpp::LogicalVector logical_index(Rcpp::IntegerVector idx, R_xlen_t n) {
   bool invert = false; 
   Rcpp::LogicalVector result(n, false);
-  
   for (R_xlen_t i = 0; i < idx.size(); i++) {
     if (!invert && idx[i] < 0) invert = true;
     result[std::abs(idx[i])] = true;
@@ -167,44 +166,52 @@ Rcpp::LogicalVector logical_index(Rcpp::IntegerVector idx, R_xlen_t n) {
 
 
 // [[Rcpp::export]]
-Rcpp::NumericVector 
-  Subset(Rcpp::NumericVector x, Rcpp::IntegerVector idx) {
+NumericVector  Subset(Rcpp::NumericVector x, Rcpp::IntegerVector idx) {
     return x[logical_index(idx, x.size())];
   }
 
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
-arma::mat kkf_C(arma::mat x,int bl, int tr)
+double kkf_C(arma::mat x,int bl, int tr)
 {
-  //IntegerVector Nrow =  seq(2, floor(bl/2));
-   //return as<NumericVector>(Nrow); 
-   //vec fvalues ();
-   vec pvalues();
-   mat yb1,yb2;
+   mat yb1,yb2,yb11,yb22;
    int count = 0;
+   NumericVector Sel(bl);
+   NumericVector rows_nsel; 
+   double fvalues=0;
+   NumericVector pvalues(floor(bl/2)*tr);
+   double rss1,rss2;
+   for(int i=0;i<bl;i++)
+     Sel[i]=i;
    for(int i=1; i< floor(bl/2);i++){
     umat ind = mycombn(bl,i+1) -1 ;
     int Nsplit = ind.n_cols;
     if((bl/2)== (i)) Nsplit = Nsplit/2;
      for(int j=0;j<Nsplit;j++){
-       count ++; 
-        yb1 = x.rows(ind.col(j)); 
-        yb2 = x.rows(Subset(seq(1,bl),-1*ind.col(j)));
-        double rss1 = as_scalar(sum(pow(res(yb1),2)));
-        double rss2 = as_scalar(sum(pow(res(yb2),2)));
-        int dfn = (tr-1)*(i-1);
-        int dfd = (bl-i-1)*(tr-1);
-        double fvalues = (rss1*(bl-i-1))/(rss2*(i-1));
+        yb1 = x.rows(ind.col(j));
+        IntegerVector nSel = as<IntegerVector>(wrap(ind.col(j)));
+        rows_nsel =  Subset(Sel,-1*nSel);
+        yb2 = x.rows(as<arma::uvec>(rows_nsel)); 
+        yb1 = res(yb1);
+        yb11 = yb1%yb1;
+        rss1 = accu(yb11);
+        yb2 = res(yb2);
+        yb22 = yb2%yb2;
+        rss2 = accu(yb22);
+        double dfn = as_scalar((tr-1)*(i+1-1));
+        double dfd = as_scalar((bl-(i+1)-1)*(tr-1));
+        fvalues = (rss1*(bl-(i+1)-1))/(rss2*(i+1-1));
         if(fvalues<1) fvalues = 1/fvalues;
-        //double a = as_scalar(1-pf(fvalues,dfn,dfd)+pf(1/fvalues,dfn,dfd));
-        //pvalues(count) = 3;
+        pvalues[count]= 1-R::pf(fvalues,dfn,dfd,1,0)+R::pf(1/fvalues,dfn,dfd,1,0);
+        count ++; 
      }
    }
-  // double KKSA = min(pvalues,0);
-   return yb2;
+   pvalues = pvalues[seq(0,count-1)];
+   double KKSA = min(pvalues);
+   return KKSA;
  }
-/*
+
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
@@ -218,7 +225,7 @@ arma::vec KKsim(int nsim,int bl, int tr){
   }
   return out;
 }
-
+/*
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
