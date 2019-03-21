@@ -253,6 +253,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// hf_C
+List hf_C(arma::mat x, int bl, int tr);
+RcppExport SEXP _combinIT_hf_C(SEXP xSEXP, SEXP blSEXP, SEXP trSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type x(xSEXP);
+    Rcpp::traits::input_parameter< int >::type bl(blSEXP);
+    Rcpp::traits::input_parameter< int >::type tr(trSEXP);
+    rcpp_result_gen = Rcpp::wrap(hf_C(x, bl, tr));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_combinIT_Seq", (DL_FUNC) &_combinIT_Seq, 2},
@@ -274,6 +287,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_combinIT_Subset", (DL_FUNC) &_combinIT_Subset, 2},
     {"_combinIT_kkf_C", (DL_FUNC) &_combinIT_kkf_C, 3},
     {"_combinIT_KKsim", (DL_FUNC) &_combinIT_KKsim, 3},
+    {"_combinIT_hf_C", (DL_FUNC) &_combinIT_hf_C, 3},
     {NULL, NULL, 0}
 };
 

@@ -236,43 +236,77 @@ NumericVector KKsim(int nsim,int bl, int tr){
   return out;
 }
 
-/*
+
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
-double hf_C(arma::mat x,int bl, int tr)
+List hf_C(arma::mat x,int bl, int tr)
 {
-  double sse =as_scalar(sum(pow(res(x),2))); 
-  vec hvalues();
-  mat yb1,yb2;
+  mat Res = res(x);
+  mat Res2 = Res%Res;
+  double sse = accu(Res2);
+  vec hvalues(1);
+  mat yb1,yb2,yb11,yb22;
+  double rss1,rss2;
   int count = 0;
+  NumericVector Sel(bl);
+  NumericVector rows_nsel; 
+  double fvalues=0;
+  vec pvalues(1);
+  for(int i=0;i<bl;i++)
+    Sel[i]=i;
   for(int i=1; i< floor(bl/2);i++){
     umat ind = mycombn(bl,i+1) -1 ;
     int Nsplit = ind.n_cols;
     if((bl/2)== (i)) Nsplit = Nsplit/2;
     for(int j=0;j<Nsplit;j++){
-      count ++;
-      yb1 = x.rows(ind.col(j));               // check
-      yb2 = x.rows(ind.col(j));
-      double rss1 = as_scalar(sum(pow(res(yb1),2)));
-      double rss2 = as_scalar(sum(pow(res(yb2),2)));
+      yb1 = x.rows(ind.col(j));
+      IntegerVector nSel = as<IntegerVector>(wrap(ind.col(j)));
+      rows_nsel =  Subset(Sel,-1*nSel);
+      yb2 = x.rows(as<arma::uvec>(rows_nsel)); 
+      yb1 = res(yb1);
+      yb11 = yb1%yb1;
+      rss1 = accu(yb11);
+      yb2 = res(yb2);
+      yb22 = yb2%yb2;
+      rss2 = accu(yb22);
       double sse7  = rss1+rss2;
-      hvalues(count) = (sse-sse7)*(bl-2)/sse7;
-      
+      hvalues[count] = (sse-sse7)*(bl-2)/sse7;
+      double dfn = as_scalar((tr-1)*(i+1-1));
+      double dfd = as_scalar((bl-(i+1)-1)*(tr-1));
+      fvalues = (rss1*(bl-(i+1)-1))/(rss2*(i+1-1));
+      if(fvalues<1) fvalues = 1/fvalues;
+      pvalues[count]= 1-R::pf(fvalues,dfn,dfd,1,0)+R::pf(1/fvalues,dfn,dfd,1,0);
+      count ++; 
+      pvalues.resize(pvalues.size()+1);
+      hvalues.resize(hvalues.size()+1);
     }
   }
-  for(int i=0; i< bl;i++){
+  double fmin = min(pvalues.subvec(0,count-1));
+  rows_nsel =  seq(1,bl);
+  yb1 = x.rows(as<arma::uvec>(rows_nsel)); 
+  yb1 = res(yb1);
+  yb11 = yb1%yb1;
+  double sse7=accu(yb11);
+  hvalues.resize(hvalues.size()+1);
+  hvalues[count] = (sse-sse7)*(bl-2)/sse7;
+  count ++;
+  for(int i=1; i< bl;i++){
+    rows_nsel =  Subset(Sel,-1*i);
+    cout << "nsel" << rows_nsel << "size: "<<hvalues.size()<<"\n";
+    //yb1 = x.rows(as<arma::uvec>(rows_nsel)); 
+    //yb1 = res(yb1);
+    //yb11 = yb1%yb1;
+    //sse7=accu(yb11);
+    //hvalues[count] = (sse-sse7)*(bl-2)/sse7;
     count ++;
-    yb1 = x.rows(-i);
-    double rss7 = as_scalar(sum(pow(res(yb1),2)));
-    hvalues(count) = (sse-sse7)*(bl-2)/sse7;
+    hvalues.resize(hvalues.size()+1);
   }
-  
-  double fmax = max(hvalues,0);
-  return(fmax);
-  
+  double fmax =  max(hvalues);
+  List out=List::create(_["fmax"]=fmax,_["fmin"]=fmin);
+  return out;
 }
-
+/*
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
