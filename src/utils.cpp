@@ -156,6 +156,7 @@ arma::umat mycombn(int n, int k) {
   return(out);
 }
 
+
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
@@ -170,7 +171,6 @@ Rcpp::LogicalVector logical_index(Rcpp::IntegerVector idx, R_xlen_t n) {
   if (!invert) return result;
   return !result;
 }
-
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
@@ -189,7 +189,7 @@ double kkf_C(arma::mat x,int bl, int tr)
    NumericVector Sel(bl);
    NumericVector rows_nsel; 
    double fvalues=0;
-   NumericVector pvalues(floor(bl/2)*tr);
+   vec pvalues(1);
    double rss1,rss2;
    for(int i=0;i<bl;i++)
      Sel[i]=i;
@@ -214,10 +214,10 @@ double kkf_C(arma::mat x,int bl, int tr)
         if(fvalues<1) fvalues = 1/fvalues;
         pvalues[count]= 1-R::pf(fvalues,dfn,dfd,1,0)+R::pf(1/fvalues,dfn,dfd,1,0);
         count ++; 
+        pvalues.resize(pvalues.size()+1);
      }
    }
-   pvalues = pvalues[seq(0,count-1)];
-   double KKSA = min(pvalues);
+   double KKSA = min(pvalues.elem(find(pvalues>1e-20)));
    return KKSA;
  }
 

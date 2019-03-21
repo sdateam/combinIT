@@ -271,13 +271,13 @@ piepho.test.old<-function(x,nsim=1000,...){
 #' data(impurity)
 #' KKSA.test(impurity,nsim=1000,dist = "sim")
 #' @export
-KKSA.test<-function(x,nsim=1000,distr = "sim",...){
+KKSA.test <-function(x,nsim=1000,distr = "sim",...){
   if(!is.matrix(x)){
     stop("The input should be a matrix")
   } else {
     bl <- nrow(x)
     tr <- ncol(x)
-    n<- tr * bl
+    n <- tr * bl
     if (bl < tr)
     {warning("transpose the input matrix")
       x<-t(x);te<-bl;bl<-tr;tr<-te}
@@ -315,7 +315,8 @@ KKSA.test.old<-function(x,nsim=1000,distr = "sim",...){
     n<-tr * bl
     if (bl < tr)
     {warning("transpose the input matrix")
-      x<-t(x);te<-bl;bl<-tr;tr<-te}
+      x<-t(x);te<-bl;bl<-tr;tr<-te
+      }
     if (bl < 4) {
       stop("KKSA needs at least 4 levels of blocking factor")
       
@@ -467,7 +468,7 @@ hiddenf.test.old<-function(x,nsim=1000,dist = "sim",...){
 #' data(cnv6)
 #' combinep(cnv6,nsim=500,nc0=10000)
 #' @export
-combinep<-function(x,nsim=500,nc0=10000,...){
+combinep <- function(x,nsim=500,nc0=10000,...){
   if (!is.matrix(x)) {
     stop("The input should be a matrix")
   } else {

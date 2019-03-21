@@ -2,11 +2,13 @@
 % Please edit documentation in R/internal.R
 \name{kpr}
 \alias{kpr}
-\title{This is an internal function which compute Kronecker product for PIC method}
+\title{This is an internal function which compute Kronecker product for PIC method
+old}
 \usage{
 kpr(bl, tr)
 }
 \description{
 This is an internal function which compute Kronecker product for PIC method
+old
 }
 \keyword{internal}

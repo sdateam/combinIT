@@ -2,11 +2,13 @@
 % Please edit documentation in R/internal.R
 \name{piepho}
 \alias{piepho}
-\title{internal function for Piepho method}
+\title{internal function for Piepho method
+old}
 \usage{
 piepho(x, bl, tr)
 }
 \description{
 internal function for Piepho method
+old
 }
 \keyword{internal}

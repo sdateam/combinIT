@@ -95,8 +95,8 @@ kk.f<-function(x,bl,tr){
   pvalues<-rep(0,0)
   count<-0
   for(i in Nrow){
-    ind<-combn(bl,i)
-    Nsplit<-ncol(ind)
+    ind <- combn(bl,i)
+    Nsplit <- ncol(ind)
     if(bl/2==i)Nsplit<-Nsplit/2
     for(j in 1:Nsplit){
       count<-count+1
@@ -109,6 +109,9 @@ kk.f<-function(x,bl,tr){
       fvalues[count]<-(rss1*(bl-i-1))/(rss2*(i-1))
       if(fvalues[count]<1) fvalues[count]<- 1/fvalues[count]
       pvalues[count]<-1- pf(fvalues[count],dfn,dfd)+pf(1/fvalues[count],dfn,dfd)
+      cat(count, ": rss1: ", rss1, "\t rss2: ", rss2, "pvalue: ",pvalues[count],"\n");
+      
+      
      }
    }
   KKSA<-min(pvalues)
@@ -165,7 +168,7 @@ kh.f<-function(x,bl,tr){
   for(i in Nrow){
     ind<-combn(bl,i)
     Nsplit<-ncol(ind)
-    if(bl/2==i)Nsplit<-Nsplit/2
+    if(bl/2==i) Nsplit<-Nsplit/2
     for(j in 1:Nsplit){
       count<-count+1
       yb1<-x[ind[,j],]
