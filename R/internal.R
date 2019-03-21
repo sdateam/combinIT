@@ -95,8 +95,8 @@ kk.f<-function(x,bl,tr){
   pvalues<-rep(0,0)
   count<-0
   for(i in Nrow){
-    ind<-combn(bl,i)
-    Nsplit<-ncol(ind)
+    ind <- combn(bl,i)
+    Nsplit <- ncol(ind)
     if(bl/2==i)Nsplit<-Nsplit/2
     for(j in 1:Nsplit){
       count<-count+1
@@ -165,7 +165,7 @@ kh.f<-function(x,bl,tr){
   for(i in Nrow){
     ind<-combn(bl,i)
     Nsplit<-ncol(ind)
-    if(bl/2==i)Nsplit<-Nsplit/2
+    if(bl/2==i) Nsplit<-Nsplit/2
     for(j in 1:Nsplit){
       count<-count+1
       yb1<-x[ind[,j],]

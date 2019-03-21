@@ -2,11 +2,13 @@
 % Please edit documentation in R/internal.R
 \name{B.f}
 \alias{B.f}
-\title{This is an internal function for Boik method}
+\title{This is an internal function for Boik method
+old}
 \usage{
 B.f(x, p)
 }
 \description{
 This is an internal function for Boik method
+old
 }
 \keyword{internal}

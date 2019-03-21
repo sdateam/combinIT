@@ -2,11 +2,13 @@
 % Please edit documentation in R/internal.R
 \name{pic.f}
 \alias{pic.f}
-\title{This is an internal function for PIC method}
+\title{This is an internal function for PIC method
+old}
 \usage{
 pic.f(y, kp, c0)
 }
 \description{
 This is an internal function for PIC method
+old
 }
 \keyword{internal}
