@@ -156,7 +156,7 @@ hh.f<-function(x,bl){
 #' @keywords internal
 #'
 kh.f<-function(x,bl,tr){
-  Nrow<-2:(as.integer(bl/2))
+  Nrow<-2:(as.integer(bl/2)) 
   sse<-sum((t(x - apply(x, 1, mean) + mean(x)) - apply(x, 2, mean))^2)
   hvalues<-rep(0,0)
   fvalues<-rep(0,0)
