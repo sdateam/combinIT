@@ -382,7 +382,7 @@ hiddenf.test<-function(x,nsim=1000,dist = "sim",...){
 
     } else{
      cch <- 2^(bl - 1) - 1
-     statistics <-hf_C(x,bl,tr)
+     statistics <-hf_C(x,bl)
      if(dist != "sim" || dist != "asy") dist="sim"
 
      if (dist == "sim")
@@ -425,10 +425,10 @@ hiddenf.test.old<-function(x,nsim=1000,dist = "sim",...){
         simu <-rep(0,0)
         for (i in 1:nsim){
           simu[i]<-hh.f(matrix(rnorm(n),nrow=bl),bl)
-          cat(paste(round(i / nsim * 100), '% completed'))
+          #cat(paste(round(i / nsim * 100), '% completed'))
           #Sys.sleep(.1)
-          if (i == nsim) cat(': Done')
-          else cat('\014')
+          #if (i == nsim) cat(': Done')
+          #else cat('\014')
         }
         hidden <- mean(statistics < simu)
       } else if (dist == "asy") {

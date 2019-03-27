@@ -115,7 +115,17 @@ KKsim <- function(nsim, bl, tr) {
 
 #' @importFrom Rcpp sourceCpp
 #' 
-hf_C <- function(x, bl, tr) {
-    .Call(`_combinIT_hf_C`, x, bl, tr)
+hf_C <- function(x, bl) {
+    .Call(`_combinIT_hf_C`, x, bl)
+}
+
+hfsim <- function(nsim, bl, tr) {
+    .Call(`_combinIT_hfsim`, nsim, bl, tr)
+}
+
+#' @importFrom Rcpp sourceCpp
+#' 
+khf_C <- function(x, bl, tr) {
+    .Call(`_combinIT_khf_C`, x, bl, tr)
 }
 
