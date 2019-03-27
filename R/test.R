@@ -475,8 +475,9 @@ combinep <- function(x,nsim=500,nc0=10000,...){
     y <- c(t(x))
     tr <- ncol(x)
     bl <- nrow(x)
-    if (bl < tr) warning("transpose the input matrix")
-    x<-t(x);te<-bl;bl<-tr;tr<-te}
+    if (bl < tr) {warning("transpose the input matrix")
+    x<-t(x);te<-bl;bl<-tr;tr<-te} # Zahra, please check this part
+    } 
     if (bl < 3) {
       stop("hiddenf needs at least 3 levels of blocking factor")
 
@@ -489,7 +490,7 @@ combinep <- function(x,nsim=500,nc0=10000,...){
     cck <- 2^(bl - 1) - 1 - bl
     cch <- 2^(bl - 1) - 1
     kp<- kpr(bl, tr)
-    c0<-C0(kp,n,nc0)
+    c0<- C0(kp,n,nc0)
     #--------------
     Bstat <-Bfc(x,bl,tr,p)
     Bsimu <- Bfsim(nsim,bl,tr,p)
@@ -503,26 +504,44 @@ combinep <- function(x,nsim=500,nc0=10000,...){
     psimu <- PICfsim(nsim,kp,c0,n)
     PIC.pvalue <- mean(pstat < psimu)
     #-------------------
-    Malik.pvalue <- mean(Mstat < Msimu)
+    #Malik.pvalue <- mean(Mstat < Msimu)
     #-------------------
-    Hstat <-hf_C(x,bl,tr)
+    if(bl==3) 
+    {Hstat<-hf_C(x,bl)
     Hsimu <-hfsim(nsim,bl,tr)
+    }else{
+      kh<-khf_C(x,bl,tr)
+      Kstat<-kh[1]
+      Hstat<-kh[2]
+      kh <- khfsim(nsim,bl,tr)
+      Ksimu<-kh[1,]
+      Hsimu<-kh[2,] 
+    }
     hiddenf.pvalue <- mean(Hstat < Hsimu)
+    if(bl==3)
+      KKSA.pvalue<- NULL else{
+        
+        KKSA.pvalue<- mean(Kstat > Ksimu)
+      }
+    
     #--------------------------
-    Kstat <-kkf_C(x,bl,tr)
-    Ksimu<-KKsim(nsim,bl,tr)
-    KKSA.pvalue<- mean(Kstat > Ksimu)
-      
-    pvalues <- c(Boik.pvalue,piepho.pvalue,hiddenf.pvalue,Malik.pvalue,PIC.pvalue,KKSA.pvalue)
+    pvalues <- c(Boik.pvalue,piepho.pvalue,hiddenf.pvalue
+                 #,Malik.pvalue
+                 ,PIC.pvalue,KKSA.pvalue)
     cp<-comb(pvalues)
     Bonferroni<-cp$Bon
     GC<-cp$GC
     Sidak<-cp$Sidak
     jacobi<-cp$jacobi
     list(nsim=nsim,piepho.pvalue=piepho.pvalue,Boik.pvalue=Boik.pvalue
-         ,Malik.pvalue=Malik.pvalue,PIC.pvalue=PIC.pvalue
-         ,KKSA.pvalue=KKSA.pvalue,hiddenf.pvalue=hiddenf.pvalue,
-         Bonferroni=Bonferroni,Sidak=Sidak,jacobi=jacobi,GC=GC)
+         #,Malik.pvalue=Malik.pvalue
+         ,PIC.pvalue=PIC.pvalue
+         ,KKSA.pvalue=KKSA.pvalue
+         ,hiddenf.pvalue=hiddenf.pvalue,
+         Bonferroni=Bonferroni,
+         Sidak=Sidak,
+         jacobi=jacobi,
+         GC=GC)
     }
   }
 
@@ -534,8 +553,9 @@ combinep.old<-function(x,nsim=500,nc0=10000,...){
     y <- c(t(x))
     tr <- ncol(x)
     bl <- nrow(x)
-    if (bl < tr) warning("transpose the input matrix")
+    if (bl < tr) {warning("transpose the input matrix")
     x<-t(x);te<-bl;bl<-tr;tr<-te}
+    }
   if (bl < 3) {
     stop("hiddenf needs at least 3 levels of blocking factor")
     
@@ -549,14 +569,12 @@ combinep.old<-function(x,nsim=500,nc0=10000,...){
     cch <- 2^(bl - 1) - 1
     kp <- kpr(bl, tr)
     c0<-mean(replicate(nc0,{median(abs(kp%*%rnorm(n)))}))
-    
     sta<-bmp.f(x,y, block , treatment,bl,tr,p)
-    
     Bstat <-sta$Boik
     Mstat <-sta$Tc
     pistat<-sta$piepho
     pstat <-pic.f(y,kp,c0)
-    if(bl==3)Hstat<-hh.f(x,bl)
+    if(bl==3) Hstat<-hh.f(x,bl)
     else{
       Ksimu <-rep(0,0)
       kh<-kh.f(x,bl,tr)
@@ -579,10 +597,10 @@ combinep.old<-function(x,nsim=500,nc0=10000,...){
           Ksimu[i]<-kh$fmin
           Hsimu[i]<-kh$fmax
         }
-      cat(paste(round(i / nsim * 100), '% completed'))
-      Sys.sleep(.1)
-      if (i == nsim) cat(': Done')
-      else cat('\014')
+      #cat(paste(round(i / nsim * 100), '% completed'))
+      #Sys.sleep(.1)
+      #if (i == nsim) cat(': Done')
+      #else cat('\014')
     }
     Boik.pvalue <- mean(Bstat > Bsimu)
     piepho.pvalue <- mean(pistat < pisimu)

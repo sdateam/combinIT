@@ -129,3 +129,9 @@ khf_C <- function(x, bl, tr) {
     .Call(`_combinIT_khf_C`, x, bl, tr)
 }
 
+#' @importFrom Rcpp sourceCpp
+#' 
+khfsim <- function(nsim, bl, tr) {
+    .Call(`_combinIT_khfsim`, nsim, bl, tr)
+}
+

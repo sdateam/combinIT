@@ -310,8 +310,9 @@ return out;
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
-List khf_C(arma::mat x,int bl, int tr)
+arma::vec khf_C(arma::mat x,int bl, int tr)
 {
+  vec out(2);
   mat Res = res(x);
   mat Res2 = Res%Res;
   double sse = accu(Res2);
@@ -352,7 +353,7 @@ List khf_C(arma::mat x,int bl, int tr)
       hvalues.resize(hvalues.size()+1);
     }
   }
-  double fmin = min(pvalues.subvec(0,count-1));
+  out(0)=min(pvalues.subvec(0,count-1));
   for(int d=0;d<bl;d++)
   {
     IntegerVector nSel = as<IntegerVector>(wrap(d));
@@ -367,8 +368,20 @@ List khf_C(arma::mat x,int bl, int tr)
     hvalues.resize(hvalues.size()+1);
     count ++;
       }
-  double fmax =  max(hvalues);
-  List out=List::create(_["fmax"]=fmax,_["fmin"]=fmin);
+  out(1) = max(hvalues.subvec(0,count-1));
   return out;
 }
 
+//' @importFrom Rcpp sourceCpp
+//' 
+// [[Rcpp::export]]
+arma::mat khfsim(int nsim,int bl, int tr){
+  mat sam(bl,tr);
+  mat out(2,nsim);
+  for(int i=0;i<nsim;i++)
+  {
+    sam.randn(bl,tr);
+    out.col(i)=khf_C(sam,bl,tr);
+  }
+  return out;
+}
