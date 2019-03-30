@@ -1,4 +1,5 @@
 #include <RcppArmadillo.h>
+#include "utils.h"
 #include <cmath>
 using namespace Rcpp;
 using namespace arma;
@@ -25,6 +26,7 @@ arma::mat res(arma::mat x) {
   return y;
 }
 
+
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]
@@ -50,6 +52,44 @@ arma::vec Bfsim(int nsim,int bl, int tr,int p){
   }
   return out;
 }
+
+
+//' @importFrom Rcpp sourceCpp
+//' 
+// [[Rcpp::export]]
+List Mfc(arma::mat x, arma::vec y, arma::vec block, arma::vec treatment, double bl, double tr) {
+  mat Res(bl,tr); 
+  Res = res(x);
+  vec r = vectorise(Res.t());
+  cout << "Residual are: " << r;
+  List kmean;
+  //mat means;
+  //cout << kmeans(means, r.t(), 3, random_subset, 10, true) ;
+  //means.print("means are: ");
+  kmean= mlkmeans(trans(r), 3);
+  vec af = as<vec>(kmean["result"]);
+  mat X;
+  X.insert_cols(X.n_cols, block);
+  X.insert_cols(X.n_cols, treatment);
+  X.insert_cols(X.n_cols, af);
+  //cout << "\n the result of kmean is: " << af;
+  return fastLm(y,X);
+}
+
+//' @importFrom Rcpp sourceCpp
+//' 
+// [[Rcpp::export]]
+arma::vec Mfsim(int nsim,int bl, int tr,int p){
+  mat sam(bl,tr);
+  vec out(nsim);
+  for(int i=0;i<nsim;i++)
+  {
+    sam.randn(bl,tr);
+    out(i)=Bfc(sam,bl,tr,p);
+  }
+  return out;
+}
+
 //' @importFrom Rcpp sourceCpp
 //' 
 // [[Rcpp::export]]

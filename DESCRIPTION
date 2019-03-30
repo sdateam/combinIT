@@ -12,7 +12,7 @@ License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: TRUE
 RoxygenNote: 6.1.1
-Imports: Rcpp,mvtnorm
-LinkingTo: Rcpp, RcppArmadillo
+Imports: Rcpp, mvtnorm
+LinkingTo: Rcpp, RcppMLPACK, RcppArmadillo, BH
 Suggests: knitr
 Dependent: R (>=2.10)

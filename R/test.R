@@ -117,6 +117,32 @@ Malik.test <- function(x, nsim=500) {
   }
 }
 
+#' @export
+Malik.test.old <- function(x, nsim=500) {
+  if (!is.matrix(x)) {
+    stop("The input should be a matrix")
+  } else {
+    tr <- ncol(x)
+    bl <- nrow(x)
+    n <- tr * bl
+    block <- gl(bl, tr)                        #block<-rep(1:bl, each=tr)
+    treatment <- gl(tr, 1, bl * tr)            #treatment<-rep(1:tr,bl)
+    y <- c(t(x))
+    statistics <-M.f(x,y,block , treatment)
+    simu <-rep(0,0)
+    for (i in 1:nsim){
+      y<-rnorm(n)
+      simu[i]<-M.f(matrix(y,nrow = bl),y,block , treatment)
+      #cat(paste(round(i / nsim * 100), '% completed'))
+      #Sys.sleep(.05)
+      #if (i == nsim) cat(': Done')
+      #else cat('\014')
+    }
+    malik <- mean(statistics < simu)
+    
+    list(pvalue = malik,nsim=nsim,statistics=statistics)
+  }
+}
 #' Kharrati-Kopaei and Miller's test for interaction
 #'
 #' Computes the test statistics and corresponding p-value based on inspecting all

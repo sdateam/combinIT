@@ -34,6 +34,19 @@ Gram <- function(K, L, A, d) {
 #' @useDynLib combinIT, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 #' 
+mlkmeans <- function(data, clusters) {
+    .Call(`_combinIT_mlkmeans`, data, clusters)
+}
+
+#' @importFrom Rcpp sourceCpp
+#' 
+fastLm <- function(y, X) {
+    .Call(`_combinIT_fastLm`, y, X)
+}
+
+#' @useDynLib combinIT, .registration = TRUE
+#' @importFrom Rcpp sourceCpp
+#' 
 res <- function(x) {
     .Call(`_combinIT_res`, x)
 }
@@ -48,6 +61,18 @@ Bfc <- function(x, bl, tr, p) {
 #' 
 Bfsim <- function(nsim, bl, tr, p) {
     .Call(`_combinIT_Bfsim`, nsim, bl, tr, p)
+}
+
+#' @importFrom Rcpp sourceCpp
+#' 
+Mfc <- function(x, y, block, treatment, bl, tr) {
+    .Call(`_combinIT_Mfc`, x, y, block, treatment, bl, tr)
+}
+
+#' @importFrom Rcpp sourceCpp
+#' 
+Mfsim <- function(nsim, bl, tr, p) {
+    .Call(`_combinIT_Mfsim`, nsim, bl, tr, p)
 }
 
 #' @importFrom Rcpp sourceCpp
